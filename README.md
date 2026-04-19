@@ -75,3 +75,25 @@ uv run --project . server
 ```
 
 The custom UI is available at `/web` and mirrors the original Sudoku Gradio layout while talking to the OpenEnv backend.
+
+## Lightning AI / Notebook Usage
+
+If your notebook kernel starts inside the `sudoku_rl` folder, Python does not
+normally see the package's parent directory, so `from sudoku_rl import ...`
+can fail with `ModuleNotFoundError`.
+
+This repo includes a local compatibility shim so that import works when you
+open the project directory directly, but you still need the project
+dependencies installed in the notebook environment:
+
+```bash
+cd sudoku_rl
+pip install -e .
+```
+
+If you prefer `uv`:
+
+```bash
+cd sudoku_rl
+uv sync
+```

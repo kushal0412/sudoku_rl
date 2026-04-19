@@ -168,6 +168,7 @@ class SudokuRlEnvironment(Environment):
         target_cell: tuple[int, int] | None = None
         addressed_cell: tuple[int, int] | None = None
         board_updated = False
+        filled_cell_error: str | None = None
         last_index = action.index
         last_row = action.row
         last_column = action.column
@@ -180,11 +181,17 @@ class SudokuRlEnvironment(Environment):
             last_column = column_index + 1
             if self._initial_puzzle[row_index][column_index] == 0:
                 target_cell = (row_index, column_index)
-                next_board[row_index][column_index] = value
-                board_updated = True
+                cell_is_invalid = target_cell in self._invalid_positions
+                if self._board[row_index][column_index] != 0 and not cell_is_invalid:
+                    filled_cell_error = "Other error: the selected cell was already updated and cannot be changed."
+                else:
+                    next_board[row_index][column_index] = value
+                    board_updated = True
 
         if location_error is not None:
             result = location_error
+        elif filled_cell_error is not None:
+            result = filled_cell_error
         else:
             result = validate_move(
                 self._initial_puzzle,
@@ -229,7 +236,7 @@ class SudokuRlEnvironment(Environment):
             return observation
 
         self._mistakes += 1
-        if target_cell is not None:
+        if board_updated and target_cell is not None:
             self._invalid_positions.add(target_cell)
             self._board = next_board
         negative_delta = -score_delta

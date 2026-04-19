@@ -20,9 +20,10 @@ An OpenEnv Sudoku environment backed by a real episode state machine instead of 
 ## What It Does
 
 - `reset(empty_boxes=...)` starts a new Sudoku puzzle with the requested number of blank cells.
-- `step(...)` updates exactly one cell using either a flat `index` (`0..80`) or `row` and `column` (`1..9`).
+- `step(...)` attempts exactly one cell update using either a flat `index` (`0..80`) or `row` and `column` (`1..9`).
 - Every observation returns the full board, score, invalid cells, mistake reason, and a compact `status_summary`.
 - Wrong moves stay on the board and are highlighted, matching the behavior in `sudoku_app.py`.
+- Previously accepted edits are locked by the environment; only empty cells or env-marked invalid cells can be changed.
 - Reward logic matches the original app: each move changes score by `round(100 / empty_boxes)`, positive for valid moves and negative for mistakes.
 
 ## Action Schema
